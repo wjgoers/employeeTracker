@@ -35,7 +35,7 @@ function runSearch() {
       ]
     })
     .then(function (answer) {
-      if (answer.choice === "View Alle Employees") {
+      if (answer.choice === "View All Employees") {
         viewEmployee();
       }
       else if (answer.choice === "View All Employee's by Roles") {
@@ -56,59 +56,59 @@ function runSearch() {
       else if (answer.choice === "Add Department") {
         addDepartment();
       }
-      else{
-        connection.end(); 
+      else {
+        connection.end();
       }
     });
 }
 
-function viewEmployee(){
-  connection.query(`SELECT employee.first_name, employee.last_name, employee.role_id, employee.manager_id, staff_db AS employee`), 
+function viewEmployee() {
+  connection.query('SELECT * FROM employee',
     function (err, res) {
       if (err) throw err;
-      console.table (err, res),
-      runSearch()
-    }
+      console.table(res),
+        runSearch()
+    })
 };
 
-function viewRole(){
-  connection.query(`SELECT role.title, role.salary, staff_db AS role`),
-  function(err, res) {
-    if (err) throw err;
-    console.table (err, res),
-    runSearch()
-};
+function viewRole() {
+  connection.query(`SELECT * FROM role`,
+    function (err, res) {
+      if (err) throw err;
+      console.table(res),
+        runSearch()
+    });
 }
 
-function viewDepartment(){
-  connection.query(`SELECT department.name`),
-  function (err, res) {
-    if (err) throw err;
-    console.table (err, res),
-    runSearch()
-};
+function viewDepartment() {
+  connection.query(`SELECT * FROM department`,
+    function (err, res) {
+      if (err) throw err;
+      console.table(res),
+        runSearch()
+    });
 }
 
-function addRole(){
+function addRole() {
   inquirer
     .prompt([
       {
         title: "title",
         type: "input",
-        message: "What is the new title?", 
+        message: "What is the new title?",
       },
       {
         salary: "salary",
         type: "input",
-        message: "What is the title's salary?", 
+        message: "What is the title's salary?",
       },
       {
         role_id: "department_id",
         type: "input",
-        message: "What department do the belong to?", 
+        message: "What department do the belong to?",
       },
     ])
-    .then(function(answer) {
+    .then(function (answer) {
       connection.query(
         "INSERT INTO role SET ?",
         {
@@ -116,7 +116,7 @@ function addRole(){
           salary: answer.salary,
           department_id: answer.department_id,
         },
-        function(err) {
+        function (err) {
           if (err) throw err;
           console.log("New role has been added!");
           runSearch();
@@ -125,40 +125,53 @@ function addRole(){
     })
 }
 
-function addEmployee(){
+function addEmployee() {
   inquirer
     .prompt([
       {
-        first_name: "first_name",
+        name: "first_name",
         type: "input",
-        message: "What is their first name?", 
+        message: "What is their first name?",
       },
       {
-        last_name: "last_name",
+        name: "last_name",
         type: "input",
-        message: "What is their last name?", 
+        message: "What is their last name?",
       },
       {
-        role_id: "role_id",
-        type: "input",
-        message: "What is their role?", 
+        name: "role_id",
+        type: "list",
+        message: "What is their role?",
+        choices: ["Sales", "Software Engineer", "Manager"]
       },
       {
-        manager_id: "manager_id",
-        type: "input",
-        message: "Who is their manager?", 
+        name: "manager_id",
+        type: "list",
+        message: "Who is their manager?",
+        choices: ["Bill"]
       },
     ])
-    .then(function(answer) {
+    .then(function (answer) {
+      let roleInt = 0
+      if (answer.role_id === "Manager") {
+        roleInt = 1
+      } else if (answer.role_id === "Software Engineer") {
+        roleInt = 2
+      }
+      let managerInt = 0
+      if (answer.manager_id === "Bill") {
+        managerInt = 1
+      }
+
       connection.query(
         "INSERT INTO employee SET ?",
         {
           first_name: answer.first_name,
           last_name: answer.last_name,
-          role_id: answer.role_id,
-          manager_id: answer.manager_id
+          role_id: roleInt,
+          manager_id: managerInt
         },
-        function(err) {
+        function (err) {
           if (err) throw err;
           console.log("New employee has been added!");
           runSearch();
@@ -167,31 +180,36 @@ function addEmployee(){
     })
 }
 
-function addDepartment(){
+function addDepartment() {
   inquirer
-  .prompt([
-    {
-      name: "name",
-      type: "input",
-      message: "What is the new department?", 
-    }
-  ])
-  .then(function(answer) {
-    connection.query(
-      "INSERT INTO employees SET ?",
+    .prompt([
       {
-        name: answer.name,
-      },
-      function(err) {
-        if (err) throw err;
-        console.log("New department has been added!");
-        runSearch();
+        name: "name",
+        type: "input",
+        message: "What is the new department?",
       }
-    )
-  })
+    ])
+    .then(function (answer) {
+      connection.query(
+        "INSERT INTO employees SET ?",
+        {
+          name: answer.name,
+        },
+        function (err) {
+          if (err) throw err;
+          console.log("New department has been added!");
+          runSearch();
+        }
+      )
+    })
 }
 
-function updateEmployee(){
+function updateEmployee() 
+
+{ // build an inquirer
+  // select the employee to update connection query of all employees
+  // select from choices to update role 
+  // select * from employee
   connection.query("UPDATE employee SET ? WHERE ?"
   [
     {
@@ -207,9 +225,10 @@ function updateEmployee(){
       department_id: ""
     }
   ],
-  function(err, res) {
-    if (err) throw err;
-    console.log(res.affectedRows + " employee updated!\n");
-    runSearch();
-  }
-  )}
+    function (err, res) {
+      if (err) throw err;
+      console.log(res.affectedRows + " employee updated!\n");
+      runSearch();
+    }
+  )
+}
