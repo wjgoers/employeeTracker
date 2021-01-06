@@ -38,7 +38,7 @@ INSERT INTO role (title, salary, department_id)
 VALUES ("software engineer", 50000.00, 2);
 
 INSERT INTO role (title, salary, department_id)
-VALUES ("sales representative", 50000.00, 3);
+VALUES ("sales", 50000.00, 3);
 
 INSERT INTO department (name)
 VALUES ("engineering");

@@ -38,7 +38,7 @@ function runSearch() {
       if (answer.choice === "View All Employees") {
         viewEmployee();
       }
-      else if (answer.choice === "View All Employee's by Roles") {
+      else if (answer.choice === "View All Employee's By Roles") {
         viewRole();
       }
       else if (answer.choice === "View all Employees By Departments") {
@@ -93,17 +93,17 @@ function addRole() {
   inquirer
     .prompt([
       {
-        title: "title",
+        name: "title",
         type: "input",
         message: "What is the new title?",
       },
       {
-        salary: "salary",
+        name: "salary",
         type: "input",
         message: "What is the title's salary?",
       },
       {
-        role_id: "department_id",
+        name: "department_id",
         type: "input",
         message: "What department do the belong to?",
       },
@@ -191,7 +191,7 @@ function addDepartment() {
     ])
     .then(function (answer) {
       connection.query(
-        "INSERT INTO employees SET ?",
+        "INSERT INTO department SET ?",
         {
           name: answer.name,
         },
@@ -204,31 +204,40 @@ function addDepartment() {
     })
 }
 
-function updateEmployee() 
-
-{ // build an inquirer
+function updateEmployee() { // build an inquirer
   // select the employee to update connection query of all employees
   // select from choices to update role 
   // select * from employee
-  connection.query("UPDATE employee SET ? WHERE ?"
-  [
-    {
-      first_name: ""
-    },
-    {
-      last_name: ""
-    },
-    {
-      role_id: ""
-    },
-    {
-      department_id: ""
-    }
-  ],
-    function (err, res) {
-      if (err) throw err;
-      console.log(res.affectedRows + " employee updated!\n");
-      runSearch();
-    }
-  )
+  inquirer
+    .prompt([
+      {
+        name: "employee_id",
+        type: "input",
+        message: "What employee by id would you like to update?",
+      },
+      {
+        name: "update_role",
+        type: "input",
+        message: "What is their new role?",
+      },
+    ])
+    .then(function (answer) {
+      connection.query("UPDATE employee SET ? WHERE ?",
+      [
+        {
+          role_id: answer.update_role
+        },
+        {
+          id: answer.employee_id
+        }
+      ],
+        function (err, res) {
+          if (err) throw err;
+          console.log(res.affectedRows + " employee updated!\n");
+          runSearch();
+        }
+      )
+
+    })
+
 }
